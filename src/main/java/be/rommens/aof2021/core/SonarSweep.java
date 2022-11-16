@@ -1,5 +1,6 @@
 package be.rommens.aof2021.core;
 
+import static java.lang.Math.min;
 import static java.util.stream.Collectors.toList;
 
 import be.rommens.aof2021.model.Measurement;
@@ -25,19 +26,32 @@ public class SonarSweep {
                 .collect(toList());
     }
 
-    public void measureDepthIncreases() {
-        LOGGER.info(String.format("%d (N/A - no previous measurement", measurements.get(0).getDepth()));
-        for(int i = 1; i < measurements.size(); i++) {
-            if (measurements.get(i).getDepth() > measurements.get(i-1).getDepth() ) {
-                LOGGER.info(String.format("%d (increased)", measurements.get(i).getDepth()));
+    public void measureDepthIncreases(int windowSize) {
+        int previousSum = sum(0, windowSize);
+        LOGGER.info(String.format("%d (N/A - no previous sum", previousSum));
+
+        int i = 1;
+        while (i + windowSize <= this.measurements.size()) {
+            int currentSum = sum(i, windowSize);
+            if (currentSum > previousSum ) {
+                LOGGER.info(String.format("%d (increased)", currentSum));
                 this.depthIncreases++;
             } else {
-                LOGGER.info(String.format("%d (decreased)", measurements.get(i).getDepth()));
+                LOGGER.info(String.format("%d (decreased)", currentSum));
             }
+            previousSum = currentSum;
+            i++;
         }
     }
 
     public int getDepthIncreases() {
         return depthIncreases;
+    }
+
+    private int sum (int startIndex, int numberOfArguments) {
+        return this.measurements.subList(startIndex, min(startIndex + numberOfArguments, this.measurements.size()))
+                .stream()
+                .map(Measurement::getDepth)
+                .reduce(0, Integer::sum);
     }
 }

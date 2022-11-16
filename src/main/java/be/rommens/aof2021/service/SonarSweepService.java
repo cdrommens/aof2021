@@ -22,8 +22,8 @@ public class SonarSweepService {
         try {
             List<String> rawMeasurements = readInput(path);
             SonarSweep sonarSweep = new SonarSweep(rawMeasurements);
-            sonarSweep.measureDepthIncreases();
-            LOGGER.info(String.format("There are %d measurements that are larger than the previous measurement.", sonarSweep.getDepthIncreases()));
+            sonarSweep.measureDepthIncreases(3);
+            LOGGER.info(String.format("There are %d sums that are larger than the previous sum.", sonarSweep.getDepthIncreases()));
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
